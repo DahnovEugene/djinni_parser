@@ -4,6 +4,7 @@ import time
 
 
 def get_data():
+    list_skill = []
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:108.0) Gecko/20100101 Firefox/108.0'
     }
@@ -12,7 +13,6 @@ def get_data():
     soap = BeautifulSoup(response.text, 'lxml')
     div_title = soap.find_all('div', 'list-jobs__title')
 
-    job_for_senior = []
     n = 1
     for page in range(1):
         link = url_djinni + f'&page={n}'
@@ -29,16 +29,15 @@ def get_data():
             title = div.span.text
             page_link = 'https://djinni.co' + link
 
-            if 'Senior' in title:
-                job_for_senior.append(title)
-            else:
-                req = requests.get(page_link)
-                soap = BeautifulSoup(req.text, 'lxml')
-                toolbar = soap.find('div', 'job-additional-info--item-text')
-                print(toolbar)
-                '''for i in toolbar:
-                    print(i.text.strip())
-                    print('-' * 20)'''
+            req = requests.get(page_link)
+            soap = BeautifulSoup(req.text, 'lxml')
+            toolbar = soap.find_all('div', 'job-additional-info--item-text')
+            skills = list(toolbar)[1].text.strip().split(',')
+
+            for el in skills:
+                new_el = el.replace('\n', ' ').strip().lower()
+                list_skill.append(new_el)
+    print(list_skill)
 
 
 def main():
