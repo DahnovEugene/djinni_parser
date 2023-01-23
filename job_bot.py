@@ -1,5 +1,7 @@
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher.filters import Text
 import os
+from pars import get_data
 
 
 bot = Bot(os.getenv('TOKEN'))
@@ -12,12 +14,17 @@ async def start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(*start_buttons)
 
-    await message.answer('Hello!', reply_markup=keyboard)
+    await message.answer('choose something', reply_markup=keyboard)
 
 
-@dp.message_handler(text=['no_exp', '1y', '2y', '3y', '4y', '5y'])
-async def get_result():
-    pass
+@dp.message_handler(Text(equals='1y'))
+async def get_result(message: types.Message):
+    await message.answer('Wait a minute...')
+
+    data = get_data('1y')
+
+    for el in data:
+        await message.answer(el)
 
 
 def main():
