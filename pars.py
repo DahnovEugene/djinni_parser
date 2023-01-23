@@ -1,5 +1,5 @@
 import csv
-
+import json
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -59,17 +59,15 @@ def get_data(xp_level: str):
                     temp_list.append(requirement)
                 requirements.append(temp_list)
 
-            jobs.append(title)
+            # jobs.append(title)
             jobs.append(page_link)
-            jobs.append(requirements)
+            # jobs.append(requirements) # TODO
 
     return jobs
 
 
-def writer_file(result: list):
-    with open('file1.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',')
-        writer.writerow(result)
+def writer_file(result: list):  # TODO
+    pass
 
 
 def main():
