@@ -1,11 +1,12 @@
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils.markdown import hbold, hlink
 from aiogram.dispatcher.filters import Text
 import os
 from pars import get_data
 import json
 
 
-bot = Bot(os.getenv('TOKEN'))
+bot = Bot(os.getenv('TOKEN'), parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot)
 
 
@@ -21,18 +22,23 @@ async def start(message: types.Message):
 @dp.message_handler(Text(equals='1y'))
 async def get_result(message: types.Message):
     await message.answer('Wait a minute...')
-
     get_data('1y')
+
     with open('some_json.json') as f:
         data = json.load(f)
 
-    # data = get_data('1y')
-
-    for el in data:
-        await message.answer(el['link'])
+    for item in data:
+        requirements = ''
+        for el in item.get('requirements'):
+            for i in el:
+                requirements = requirements + i + '\n'
+        card = f"{hlink(item.get('title'), item.get('link'))}\n" \
+            f"{hbold(requirements)}"
+        await message.answer(card)
 
 
 def main():
+    print('Bot started!')
     executor.start_polling(dp)
 
 
