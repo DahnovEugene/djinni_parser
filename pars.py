@@ -49,6 +49,7 @@ def get_data(xp_level: str):
 
             #  collection of all requirements to the list
 
+            jobs_dict = {}
             requirements = []
             for element in toolbar:
                 temp_list = []
@@ -59,22 +60,25 @@ def get_data(xp_level: str):
                     temp_list.append(requirement)
                 requirements.append(temp_list)
 
+            jobs_dict['title'] = title
             # jobs.append(title)
-            jobs.append(page_link)
-            # jobs.append(requirements) # TODO
+            jobs_dict['link'] = page_link
+            # jobs.append(page_link)
+            jobs_dict['requirements'] = requirements
+            # jobs.append(requirements)
+            jobs.append(jobs_dict)
 
     return jobs
 
 
-def writer_file(result: list):  # TODO
-    pass
+def writer_file(result: list):
+    with open('some_json.json', 'w') as f:
+        json.dump(result, f, indent=4)
 
 
 def main():
     # simple_input = ['no_exp', '1y', '2y', '3y', '4y', '5y']
-    res = get_data('1y')
-    for i in res:
-        print(i)
+    writer_file(get_data('1y'))
 
 
 if __name__ == '__main__':

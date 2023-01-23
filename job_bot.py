@@ -2,6 +2,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text
 import os
 from pars import get_data
+import json
 
 
 bot = Bot(os.getenv('TOKEN'))
@@ -21,10 +22,14 @@ async def start(message: types.Message):
 async def get_result(message: types.Message):
     await message.answer('Wait a minute...')
 
-    data = get_data('1y')
+    get_data('1y')
+    with open('some_json.json') as f:
+        data = json.load(f)
+
+    # data = get_data('1y')
 
     for el in data:
-        await message.answer(el)
+        await message.answer(el['link'])
 
 
 def main():
