@@ -184,4 +184,6 @@ cython_debug/
 poetry.toml
 
 some_json.json
+settings.py
+
 # End of https://www.toptal.com/developers/gitignore/api/python,linux
