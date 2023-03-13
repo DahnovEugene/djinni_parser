@@ -1,20 +1,23 @@
-import csv
 import json
 import requests
 from bs4 import BeautifulSoup
 import time
+from settings import params, cookies, headers
 
 
 def get_data(xp_level: str):
+    """
+    simple_input = ['no_exp', '1y', '2y', '3y', '4y', '5y']
+    at the output list
+    """
     jobs = []
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:108.0) Gecko/20100101 Firefox/108.0'
-    }
+    id_work = 0
+
     url_djinni = f"https://djinni.co/jobs/?primary_keyword=Python&region=UKR&exp_level={xp_level}"
     count_page = 1
 
     s = requests.Session()
-    response = s.get(url=url_djinni, headers=headers).text
+    response = s.get(url=url_djinni, params=params, cookies=cookies, headers=headers).text
     soup = BeautifulSoup(response, 'lxml')
 
     # find last page
@@ -30,7 +33,7 @@ def get_data(xp_level: str):
     for page in range(last_page):
         link = url_djinni + f'&page={count_page}'
         print(f'page = {count_page}/{last_page}')
-        response = s.get(link, headers=headers)
+        response = s.get(link, params=params, cookies=cookies, headers=headers)
         soap = BeautifulSoup(response.text, 'lxml')
         div_title = soap.find_all('div', 'list-jobs__title')
         time.sleep(3)
@@ -39,11 +42,12 @@ def get_data(xp_level: str):
         # find all links job on page
 
         for div in div_title:
+            id_work += 1
             link = div.a.get('href')
             title = div.span.text
             page_link = 'https://djinni.co' + link
 
-            req = s.get(page_link, headers=headers)
+            req = s.get(page_link, params=params, cookies=cookies, headers=headers)
             soap = BeautifulSoup(req.text, 'lxml')
             toolbar = soap.find_all('li', class_="job-additional-info--item")
 
@@ -60,25 +64,23 @@ def get_data(xp_level: str):
                     temp_list.append(requirement)
                 requirements.append(temp_list)
 
+            jobs_dict['id_work'] = id_work
             jobs_dict['title'] = title
-            # jobs.append(title)
             jobs_dict['link'] = page_link
-            # jobs.append(page_link)
             jobs_dict['requirements'] = requirements
-            # jobs.append(requirements)
             jobs.append(jobs_dict)
 
     return jobs
 
 
-def writer_file(result: list):
+def writer_file(xp_level: str):
+    data = get_data(xp_level)
     with open('some_json.json', 'w') as f:
-        json.dump(result, f, indent=4)
+        json.dump(data, f, indent=4)
 
 
 def main():
-    # simple_input = ['no_exp', '1y', '2y', '3y', '4y', '5y']
-    writer_file(get_data('1y'))
+    get_data('1y')
 
 
 if __name__ == '__main__':

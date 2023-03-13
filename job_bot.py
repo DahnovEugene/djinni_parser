@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.markdown import hbold, hlink
 from aiogram.dispatcher.filters import Text
 import os
-from pars import get_data
+from pars import *
 import json
 
 
@@ -22,7 +22,7 @@ async def start(message: types.Message):
 @dp.message_handler(Text(equals='1y'))
 async def get_result(message: types.Message):
     await message.answer('Wait a minute...')
-    get_data('1y')
+    writer_file('1y')
 
     with open('some_json.json') as f:
         data = json.load(f)
